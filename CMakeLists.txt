@@ -7,7 +7,6 @@ set(CMAKE_CXX_STANDARD 23)
 add_library(LOGorithm STATIC
         src/Logger.cpp
         include/logorithm/Logger.h
-        examples/example.cpp
 )
 
 target_include_directories(LOGorithm
