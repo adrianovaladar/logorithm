@@ -14,9 +14,11 @@ target_include_directories(LOGorithm
         ${PROJECT_SOURCE_DIR}/include
 )
 
-add_executable(example examples/example.cpp)
-
-target_link_libraries(example PRIVATE LOGorithm)
-
 install(TARGETS LOGorithm DESTINATION lib)
 install(DIRECTORY include/ DESTINATION include)
+
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    add_executable(example examples/example.cpp)
+    target_link_libraries(example PRIVATE LOGorithm)
+    add_subdirectory(tests)
+endif()
