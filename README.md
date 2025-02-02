@@ -1,4 +1,8 @@
 # logorithm
+
+[![CMake](https://github.com/adrianovaladar/logorithm/actions/workflows/cmake.yml/badge.svg)](https://github.com/adrianovaladar/logorithm/actions/workflows/cmake.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=adrianovaladar_logorithm&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=adrianovaladar_logorithm)
+
 LOGorithm is a C++ library that provides a simple and efficient logging system. It features a singleton logger with various log levels (Info, Warning, Error), thread-safe logging, and automatic file handling.
 
 ## Usage Example
