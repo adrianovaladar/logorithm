@@ -6,20 +6,22 @@
 #include <source_location>
 #include <string>
 
-std::string sourceToString(std::source_location const source) {
-    std::stringstream ss;
-    ss << std::filesystem::path(source.file_name()).filename().string() << ":" << source.function_name() << ":" << source.line();
-    return ss.str();
-}
+namespace {
+    std::string sourceToString(std::source_location const source) {
+        std::stringstream ss;
+        ss << std::filesystem::path(source.file_name()).filename().string() << ":" << source.function_name() << ":" << source.line();
+        return ss.str();
+    }
 
-std::string getFormattedDate() {
-    const auto now = std::chrono::system_clock::now();
-    const auto nowTime = std::chrono::system_clock::to_time_t(now);
-    std::tm now_tm{};
-    localtime_r(&nowTime, &now_tm);
-    std::stringstream ss;
-    ss << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S");
-    return ss.str();
+    std::string getFormattedDate() {
+        const auto now = std::chrono::system_clock::now();
+        const auto nowTime = std::chrono::system_clock::to_time_t(now);
+        std::tm now_tm{};
+        localtime_r(&nowTime, &now_tm);
+        std::stringstream ss;
+        ss << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S");
+        return ss.str();
+    }
 }
 
 void Logger::log(const std::string &text, LOGLEVEL level, std::source_location const source) {
