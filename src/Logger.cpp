@@ -24,7 +24,7 @@ namespace {
     }
 }
 
-void Logger::log(const std::string &text, LOGLEVEL level, std::source_location const source) {
+void Logger::log(const std::string_view &text, LOGLEVEL level, std::source_location const source) {
     std::scoped_lock lock(mutex);
     if (errorReported.load())
         return;

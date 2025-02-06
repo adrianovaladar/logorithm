@@ -38,7 +38,7 @@ public:
       * @param level The log level.
       * @param source The source location of the log message.
      */
-    void log(const std::string &text, LOGLEVEL level, std::source_location source = std::source_location::current());
+    void log(const std::string_view &text, LOGLEVEL level, std::source_location source = std::source_location::current());
     /**
      * @brief Get the file name of the log file.
      * @return The file name of the log file.
