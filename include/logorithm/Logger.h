@@ -20,7 +20,7 @@ enum class LOGLEVEL : char {
 /**
  * @brief Meyer’s Singleton class for logging messages.
  */
-class Logger {
+class Logger final {
 public:
     /**
      * @brief Get the singleton instance of Logger.
@@ -75,7 +75,7 @@ private:
     /**
      * @brief Destructor to close the log file.
      */
-    virtual ~Logger() = default;
+    ~Logger() = default;
 };
 /**
  * @brief Global logger instance.
