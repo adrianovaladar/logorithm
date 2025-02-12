@@ -12,9 +12,12 @@
  * @brief Enumeration for log levels.
  */
 enum class LOGLEVEL : char {
-    Info = 'I',    /**< Informational message. */
-    Warning = 'W', /**< Warning message. */
-    Error = 'E'    /**< Error message. */
+    None = 0,    /**< No logging at all. */
+    Error = 1,   /**< Error message. */
+    Warning = 2, /**< Warning message. */
+    Info = 3,    /**< Informational message. */
+    Debug = 4,   /**< Debug message. */
+    All = 5      /**< Log everything. */
 };
 
 /**
@@ -44,12 +47,21 @@ public:
      * @return The file name of the log file.
      */
     const std::filesystem::path &getLogFileName() const;
-
+    /**
+     * @brief Sets the minimum log level to be considered for logging.
+     *
+     * This method updates the minimum log level, filtering out any log messages
+     * that are below the specified level. By default, the logger considers all levels.
+     *
+     * @param logLevelFilter The new minimum log level to be set.
+     */
+    void setMinimumLogLevel(LOGLEVEL logLevelFilter);
 private:
     std::mutex mutex {};/**< Mutex for thread safety. */
     std::filesystem::path logFileName;/**< File name of the log file. */
     std::atomic<bool> errorReported{false};/**< Atomic boolean flag indicating whether an error has been reported. */
     std::ofstream file;/**< Output file stream for logging. */
+    std::atomic<LOGLEVEL> minLogLevel{LOGLEVEL::All}; /**< Minimum log level to be considered. Default to All */
     /**
      * @brief Private constructor to prevent instantiation from outside.
      */

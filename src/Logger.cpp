@@ -6,6 +6,8 @@
 #include <source_location>
 #include <string>
 
+using enum LOGLEVEL;
+
 namespace {
     std::string sourceToString(std::source_location const source) {
         std::stringstream ss;
@@ -22,13 +24,26 @@ namespace {
         ss << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S");
         return ss.str();
     }
+    std::string logLevelToString(const LOGLEVEL logLevel) {
+        switch (logLevel) {
+            case Error:   return "Error";
+            case Warning: return "Warning";
+            case Info:    return "Info";
+            case Debug:   return "Debug";
+            default:      return "Unknown";
+        }
+    }
+}
+
+void Logger::setMinimumLogLevel(const LOGLEVEL logLevelFilter) {
+    minLogLevel = logLevelFilter;
 }
 
 void Logger::log(const std::string_view &text, LOGLEVEL level, std::source_location const source) {
     std::scoped_lock lock(mutex);
-    if (errorReported.load())
+    if (level > minLogLevel || errorReported.load() || level == None || level == All)
         return;
-    file << "[" << static_cast<char>(level) << "] " << getFormattedDate() << " | " << sourceToString(source) << " | " << text << std::endl;
+    file << "[" << logLevelToString(level) << "] " << getFormattedDate() << " | " << sourceToString(source) << " | " << text << std::endl;
     if (file.fail() && !errorReported.exchange(true)) {
         std::cerr << "Failed to write to log file: " << logFileName << std::endl;
     }
