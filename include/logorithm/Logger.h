@@ -11,7 +11,7 @@
 /**
  * @brief Enumeration for log levels.
  */
-enum class LOGLEVEL : char {
+enum class LOGLEVEL : int {
     None = 0,    /**< No logging at all. */
     Fatal = 1,   /**< Fatal message. */
     Error = 2,   /**< Error message. */
@@ -69,8 +69,9 @@ private:
      */
     Logger() {
         const std::filesystem::path directoryName = "logs";
-        if (!exists(directoryName) && !is_directory(directoryName)) {
-            create_directory(directoryName);
+        if (std::error_code ec{}; !exists(directoryName) && !is_directory(directoryName) && !create_directory(directoryName, ec)) {
+            std::cerr << "Failed to create log directory: " << ec.message() << std::endl;
+            errorReported.exchange(true);
         }
         logFileName += directoryName / "log_";
         const auto now = std::chrono::system_clock::now();
