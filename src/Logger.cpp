@@ -26,10 +26,12 @@ namespace {
     }
     std::string logLevelToString(const LOGLEVEL logLevel) {
         switch (logLevel) {
+            case Fatal:   return "Fatal";
             case Error:   return "Error";
             case Warning: return "Warning";
             case Info:    return "Info";
             case Debug:   return "Debug";
+            case Trace:   return "Trace";
             default:      return "Unknown";
         }
     }

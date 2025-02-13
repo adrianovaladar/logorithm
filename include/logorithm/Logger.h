@@ -13,11 +13,13 @@
  */
 enum class LOGLEVEL : char {
     None = 0,    /**< No logging at all. */
-    Error = 1,   /**< Error message. */
-    Warning = 2, /**< Warning message. */
-    Info = 3,    /**< Informational message. */
-    Debug = 4,   /**< Debug message. */
-    All = 5      /**< Log everything. */
+    Fatal = 1,   /**< Fatal message. */
+    Error = 2,   /**< Error message. */
+    Warning = 3, /**< Warning message. */
+    Info = 4,    /**< Informational message. */
+    Debug = 5,   /**< Debug message. */
+    Trace = 6,   /**< Trace message. */
+    All = 7      /**< Log everything. */
 };
 
 /**
