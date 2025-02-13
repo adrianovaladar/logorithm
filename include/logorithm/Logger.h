@@ -66,13 +66,13 @@ private:
      * @brief Private constructor to prevent instantiation from outside.
      */
     Logger() {
-        std::filesystem::path directoryName = "logs";
+        const std::filesystem::path directoryName = "logs";
         if (!exists(directoryName) && !is_directory(directoryName)) {
             create_directory(directoryName);
         }
         logFileName += directoryName / "log_";
-        auto now = std::chrono::system_clock::now();
-        std::time_t nowTime = std::chrono::system_clock::to_time_t(now);
+        const auto now = std::chrono::system_clock::now();
+        const std::time_t nowTime = std::chrono::system_clock::to_time_t(now);
         std::tm now_tm{};
         localtime_r(&nowTime, &now_tm);
         std::stringstream ss;
