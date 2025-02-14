@@ -37,15 +37,20 @@ void Logger::setMinimumLogLevel(const LOGLEVEL logLevelFilter) {
     minLogLevel = logLevelFilter;
 }
 
-void Logger::log(const std::string_view &text, LOGLEVEL level, std::source_location const source) {
+void Logger::log(const std::string_view &text, const LOGLEVEL level, const std::source_location source) {
+    if (level > minLogLevel || errorReported.load() || level == None || level == All) return;
+    const std::string log = std::format("[{}] {} | {} | {}",
+                        logLevelToString(level),
+                        getFormattedDate(),
+                        sourceToString(source),
+                        text);
     std::scoped_lock lock(mutex);
-    if (level > minLogLevel || errorReported.load() || level == None || level == All)
-        return;
-    file << "[" << logLevelToString(level) << "] " << getFormattedDate() << " | " << sourceToString(source) << " | " << text << std::endl;
+    file << log << std::endl; // std::endl flushes the output buffer
     if (file.fail() && !errorReported.exchange(true)) {
         std::cerr << "Failed to write to log file: " << logFileName << std::endl;
     }
 }
+
 const std::filesystem::path &Logger::getLogFileName() const {
     return logFileName;
 }
