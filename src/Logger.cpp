@@ -1,7 +1,6 @@
 #include "../include/logorithm/Logger.h"
 #include <chrono>
 #include <filesystem>
-#include <iomanip>
 #include <iostream>
 #include <source_location>
 #include <string>
@@ -9,21 +8,18 @@
 using enum LOGLEVEL;
 
 namespace {
-    std::string sourceToString(std::source_location const source) {
-        std::stringstream ss;
-        ss << std::filesystem::path(source.file_name()).filename().string() << ":" << source.function_name() << ":" << source.line();
-        return ss.str();
+    std::string sourceToString(const std::source_location source) {
+        return std::format("{}:{}:{}",
+                           std::filesystem::path(source.file_name()).filename().string(),
+                           source.function_name(),
+                           source.line());
     }
 
     std::string getFormattedDate() {
-        const auto now = std::chrono::system_clock::now();
-        const auto nowTime = std::chrono::system_clock::to_time_t(now);
-        std::tm now_tm{};
-        localtime_r(&nowTime, &now_tm);
-        std::stringstream ss;
-        ss << std::put_time(&now_tm, "%Y-%m-%d %H:%M:%S");
-        return ss.str();
+        using namespace std::chrono;
+        return std::format("{:%Y-%m-%d %H:%M:%S}", floor<seconds>(system_clock::now()));
     }
+
     std::string logLevelToString(const LOGLEVEL logLevel) {
         switch (logLevel) {
             case Fatal:   return "Fatal";
