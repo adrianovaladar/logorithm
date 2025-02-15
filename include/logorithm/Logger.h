@@ -8,6 +8,7 @@
 #include <mutex>
 #include <source_location>
 #include <string>
+#include <chrono>
 /**
  * @brief Enumeration for log levels.
  */
@@ -64,6 +65,8 @@ private:
     std::atomic<bool> errorReported{false};/**< Atomic boolean flag indicating whether an error has been reported. */
     std::ofstream file;/**< Output file stream for logging. */
     std::atomic<LOGLEVEL> minLogLevel{LOGLEVEL::All}; /**< Minimum log level to be considered. Default to All */
+    size_t maximumSize{10 * 1024 * 1024};
+    void fillLogFileName(const std::filesystem::path& directoryName);
     /**
      * @brief Private constructor to prevent instantiation from outside.
      */
@@ -73,14 +76,7 @@ private:
             std::cerr << "Failed to create log directory: " << ec.message() << std::endl;
             errorReported.exchange(true);
         }
-        logFileName += directoryName / "log_";
-        const auto now = std::chrono::system_clock::now();
-        const std::time_t nowTime = std::chrono::system_clock::to_time_t(now);
-        std::tm now_tm{};
-        localtime_r(&nowTime, &now_tm);
-        std::stringstream ss;
-        ss << std::put_time(&now_tm, "%Y-%m-%d");
-        logFileName += ss.str() + ".txt";
+        fillLogFileName(directoryName);
         file.open(logFileName, std::ofstream::app);
         if (!file.is_open()) {
             std::cerr << "Failed to open log file: " << logFileName << std::endl;

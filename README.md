@@ -60,6 +60,12 @@ Each log level includes all the logs from the levels below it:
 - **Trace** logs **Trace**, **Debug**, **Info**, **Warning**, **Error**, and **Fatal** messages;
 - **All** logs **everything**, including **Trace**, **Debug**, **Info**, **Warning**, **Error**, and **Fatal**.
 
+## Log File Management
+- Log files are stored in the logs directory;
+- Log files are named log_YYYY-MM-DD_XXX.txt where XXX is a counter (000-999);
+- If 1000 log files are reached, a default file log_YYYY-MM-DD.txt is used;
+- Each log file has a 10MB size limit before rolling over to a new file (if the program exceeds this limit while running, logging continues in the same file until restart).
+
 ## Creators
 
 This project was created by [**Adriano Valadar**](https://github.com/adrianovaladar).

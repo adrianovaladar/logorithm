@@ -54,3 +54,18 @@ void Logger::log(const std::string_view &text, const LOGLEVEL level, const std::
 const std::filesystem::path &Logger::getLogFileName() const {
     return logFileName;
 }
+
+void Logger::fillLogFileName(const std::filesystem::path& directoryName) {
+    using namespace std::chrono;
+    logFileName = directoryName / std::format("log_{:%Y-%m-%d}", system_clock::now());
+    for (int i = 0; i < 1000; ++i) {
+        const std::filesystem::path fileNameToSearch = logFileName.parent_path() /
+            std::format("{}_{:03}.txt", logFileName.stem().string(), i);
+        if (!exists(fileNameToSearch) ||
+            (exists(fileNameToSearch) && file_size(fileNameToSearch) < maximumSize)) {
+            logFileName = fileNameToSearch;
+            return;
+            }
+    }
+    logFileName += ".txt";
+}
