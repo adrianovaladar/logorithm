@@ -39,12 +39,15 @@ public:
     Logger(const Logger &) = delete;           // Disable copy constructor
     Logger &operator=(const Logger &) = delete;// Disable copy assignment operator
     /**
-      * @brief Log a message.
-      * @param text The text of the log message.
-      * @param level The log level.
-      * @param source The source location of the log message.
+     * @brief Log a message.
+     * @param text The text of the log message.
+     * @param level The log level.
+     * @param fields Optional pairs of strings to include additional information in the log.
+     * @param source The source location of the log message.
      */
-    void log(const std::string_view &text, LOGLEVEL level, std::source_location source = std::source_location::current());
+    void log(const std::string_view &text, LOGLEVEL level,
+             const std::vector<std::pair<std::string, std::string>> &fields = {},
+             std::source_location source = std::source_location::current());
     /**
      * @brief Get the file name of the log file.
      * @return The file name of the log file.

@@ -37,13 +37,15 @@ void Logger::setMinimumLogLevel(const LOGLEVEL logLevelFilter) {
     minLogLevel = logLevelFilter;
 }
 
-void Logger::log(const std::string_view &text, const LOGLEVEL level, const std::source_location source) {
-    if (level > minLogLevel || errorReported.load() || level == None || level == All) return;
-    const std::string log = std::format("[{}] {} | {} | {}",
-                        logLevelToString(level),
-                        getFormattedDate(),
-                        sourceToString(source),
-                        text);
+void Logger::log(const std::string_view &text, const LOGLEVEL level,
+                 const std::vector<std::pair<std::string, std::string>> &fields, const std::source_location source) {
+    if (level > minLogLevel || errorReported.load() || level == None || level == All)
+        return;
+    std::string log =
+            std::format("[{}] {} | {} | {}", logLevelToString(level), getFormattedDate(), sourceToString(source), text);
+    for (const auto &[key, value]: fields) {
+        log += std::format(" | {} = {}", key, value);
+    }
     std::scoped_lock lock(mutex);
     file << log << std::endl; // std::endl flushes the output buffer
     if (file.fail() && !errorReported.exchange(true)) {
