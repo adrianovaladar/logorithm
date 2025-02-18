@@ -60,7 +60,7 @@ const std::filesystem::path &Logger::getLogFileName() const {
 void Logger::fillLogFileName(const std::filesystem::path& directoryName) {
     using namespace std::chrono;
     logFileName = directoryName / std::format("log_{:%Y-%m-%d}", system_clock::now());
-    for (int i = 0; i < 1000; ++i) {
+    for (int i = 0; i < maximumFileCount; ++i) {
         const std::filesystem::path fileNameToSearch = logFileName.parent_path() /
             std::format("{}_{:03}.txt", logFileName.stem().string(), i);
         if (!exists(fileNameToSearch) ||

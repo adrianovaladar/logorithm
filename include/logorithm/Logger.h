@@ -68,7 +68,8 @@ private:
     std::atomic<bool> errorReported{false};/**< Atomic boolean flag indicating whether an error has been reported. */
     std::ofstream file;/**< Output file stream for logging. */
     std::atomic<LOGLEVEL> minLogLevel{LOGLEVEL::All}; /**< Minimum log level to be considered. Default to All */
-    size_t maximumSize{10 * 1024 * 1024};
+    size_t maximumSize{10 * 1024 * 1024}; /**< Maximum allowed log file size in bytes (10 MB). */
+    int maximumFileCount = 1000; /**< Maximum number of log files to attempt before stopping. */
     void fillLogFileName(const std::filesystem::path& directoryName);
     /**
      * @brief Private constructor to prevent instantiation from outside.
