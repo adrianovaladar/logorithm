@@ -1,14 +1,12 @@
 #ifndef LOGORITHM_LOGGER_H
 #define LOGORITHM_LOGGER_H
 
-#include <atomic>
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <mutex>
 #include <source_location>
 #include <string>
-#include <chrono>
+#include <vector>
+#include <memory>
+#include <filesystem>
+
 /**
  * @brief Enumeration for log levels.
  */
@@ -49,11 +47,6 @@ public:
              const std::vector<std::pair<std::string, std::string>> &fields = {},
              std::source_location source = std::source_location::current());
     /**
-     * @brief Get the file name of the log file.
-     * @return The file name of the log file.
-     */
-    const std::filesystem::path &getLogFileName() const;
-    /**
      * @brief Sets the minimum log level to be considered for logging.
      *
      * This method updates the minimum log level, filtering out any log messages
@@ -62,35 +55,22 @@ public:
      * @param logLevelFilter The new minimum log level to be set.
      */
     void setMinimumLogLevel(LOGLEVEL logLevelFilter);
+    /**
+     * @brief Get the file name of the log file.
+     * @return The file name of the log file.
+     */
+    [[nodiscard]] const std::filesystem::path &getLogFileName() const;
 private:
-    std::mutex mutex {};/**< Mutex for thread safety. */
-    std::filesystem::path logFileName;/**< File name of the log file. */
-    std::atomic<bool> errorReported{false};/**< Atomic boolean flag indicating whether an error has been reported. */
-    std::ofstream file;/**< Output file stream for logging. */
-    std::atomic<LOGLEVEL> minLogLevel{LOGLEVEL::All}; /**< Minimum log level to be considered. Default to All */
-    size_t maximumSize{10 * 1024 * 1024}; /**< Maximum allowed log file size in bytes (10 MB). */
-    int maximumFileCount = 1000; /**< Maximum number of log files to attempt before stopping. */
-    void fillLogFileName(const std::filesystem::path& directoryName);
+    class LoggerPImpl;
+    std::unique_ptr<LoggerPImpl> impl;
     /**
      * @brief Private constructor to prevent instantiation from outside.
      */
-    Logger() {
-        const std::filesystem::path directoryName = "logs";
-        if (std::error_code ec{}; !exists(directoryName) && !is_directory(directoryName) && !create_directory(directoryName, ec)) {
-            std::cerr << "Failed to create log directory: " << ec.message() << std::endl;
-            errorReported.exchange(true);
-        }
-        fillLogFileName(directoryName);
-        file.open(logFileName, std::ofstream::app);
-        if (!file.is_open()) {
-            std::cerr << "Failed to open log file: " << logFileName << std::endl;
-            errorReported.exchange(true);
-        }
-    }
+    Logger();
     /**
      * @brief Destructor to close the log file.
      */
-    ~Logger() = default;
+    ~Logger();
 };
 /**
  * @brief Global logger instance.
