@@ -5,6 +5,21 @@
 
 LOGorithm is a C++ library that provides a simple and efficient logging system. It features a singleton logger with various log levels (Trace, Debug, Info, Warning, Error, Fatal), thread-safe logging, and automatic file handling.
 
+## Setup
+
+It is possible to include LOGorithm in a project using CMake:
+
+```cmake
+include(FetchContent)
+FetchContent_Declare(
+        LOGorithm
+        GIT_REPOSITORY https://github.com/adrianovaladar/LOGorithm.git
+        GIT_TAG main
+)
+FetchContent_MakeAvailable(LOGorithm)
+target_link_libraries(Project PRIVATE LOGorithm)
+```
+
 ## Usage Example
 
 ```cpp
