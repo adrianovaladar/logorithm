@@ -30,6 +30,7 @@ protected:
         logFile.close();
     }
 
+    void storeLogs() { loggerTests.storeLogs(); }
 };
 
 

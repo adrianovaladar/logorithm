@@ -12,6 +12,8 @@ TEST_F(LoggerTests, CheckLogsAllLevels) {
     logger.log("This is an error message.", Error);
     logger.log("This is a fatal message.", Fatal);
 
+    storeLogs();
+
     std::stringstream buffer;
     buffer << logFile.rdbuf();
     std::string logContents = buffer.str();
@@ -26,6 +28,8 @@ TEST_F(LoggerTests, CheckLogsAllLevels) {
 
 TEST_F(LoggerTests, LogMessageTest) {
     loggerTests.log("Test message", Info);
+
+    storeLogs();
 
     std::stringstream buffer;
     buffer << logFile.rdbuf();
@@ -45,6 +49,8 @@ TEST_F(LoggerTests, MultipleLogMessagesTest) {
     for (int i{}; i < threads.size(); i++)
         threads.at(i).join();
 
+    storeLogs();
+
     std::stringstream buffer;
     buffer << logFile.rdbuf();
     std::string logContents = buffer.str();
@@ -58,9 +64,12 @@ TEST_F(LoggerTests, LogOnlyError) {
     loggerTests.log("Info message", Info);
     loggerTests.log("Error message", Error);
 
+    storeLogs();
+
     std::stringstream buffer;
     buffer << logFile.rdbuf();
     std::string logContents = buffer.str();
+
     ASSERT_EQ(std::string::npos, logContents.find("Info message"));
     ASSERT_NE(std::string::npos, logContents.find("Error message"));
 }

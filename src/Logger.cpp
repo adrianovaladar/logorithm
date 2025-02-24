@@ -58,6 +58,8 @@ class Logger::LoggerPImpl {
     std::atomic<LOGLEVEL> minLogLevel{LOGLEVEL::All}; /**< Minimum log level to be considered. Default to All */
     const size_t maximumSize{10 * 1024 * 1024}; /**< Maximum allowed log file size in bytes (10 MB). */
     const int maximumFileCount = 1000; /**< Maximum number of log files to attempt before stopping. */
+    std::vector<std::string> logsBuffer; /**< Buffer to store logs before writing to the file. */
+    const size_t bufferSize = 100; /**< Maximum number of log messages before flushing to the file. */
 public:
     /**
      * @brief Constructs the LoggerPImpl instance.
@@ -80,7 +82,7 @@ public:
     /**
      * @brief Destructor for LoggerPImpl.
      */
-    ~LoggerPImpl() = default;
+    ~LoggerPImpl() { storeLogs(); }
     /**
      * @brief Determines the appropriate log file name based on date and size.
      * @param directoryName The directory where logs are stored.
@@ -114,8 +116,28 @@ public:
         for (const auto &[key, value]: fields) {
             log += std::format(" | {} = {}", key, value);
         }
+        {
+            std::scoped_lock lock(mutex);
+            logsBuffer.push_back(log);
+        }
+        if (logsBuffer.size() >= bufferSize) {
+            storeLogs();
+        }
+    }
+    /**
+     * @brief Writes all buffered log messages to the file and clears the buffer.
+     *
+     * This function ensures logs are written efficiently by reducing the number
+     * of disk I/O operations. It acquires a lock to prevent race conditions and
+     * writes all stored messages to the file at once.
+     */
+    void storeLogs() {
         std::scoped_lock lock(mutex);
-        file << log << std::endl; // std::endl flushes the output buffer
+        for (const auto &log: logsBuffer) {
+            file << log << std::endl;
+        }
+        file.flush();
+        logsBuffer.clear();
         if (file.fail() && !errorReported.exchange(true)) {
             std::cerr << "Failed to write to log file: " << logFileName << std::endl;
         }
@@ -150,6 +172,12 @@ void Logger::log(const std::string_view &text, const LOGLEVEL level,
 void Logger::setMinimumLogLevel(const LOGLEVEL logLevelFilter) {
     if (impl) {
         impl->setMinimumLogLevel(logLevelFilter);
+    }
+}
+
+void Logger::storeLogs() {
+    if (impl) {
+        impl->storeLogs();
     }
 }
 

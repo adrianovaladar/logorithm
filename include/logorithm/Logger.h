@@ -71,6 +71,15 @@ private:
      * @brief Destructor to close the log file.
      */
     ~Logger();
+    /**
+     * @brief Writes all buffered log messages to the file and clears the buffer.
+     *
+     * This function ensures logs are written efficiently by reducing the number
+     * of disk I/O operations. It acquires a lock to prevent race conditions and
+     * writes all stored messages to the file at once.
+     */
+    void storeLogs();
+    friend class LoggerTests;
 };
 /**
  * @brief Global logger instance.
