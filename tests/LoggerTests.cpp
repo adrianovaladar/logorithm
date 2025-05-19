@@ -5,12 +5,12 @@
 using enum LOGLEVEL;
 
 TEST_F(LoggerTests, CheckLogsAllLevels) {
-    logger.log("This is a trace message.", Trace);
-    logger.log("This is a debug message.", Debug);
-    logger.log("This is an info message.", Info);
-    logger.log("This is a warning message.", Warning);
-    logger.log("This is an error message.", Error);
-    logger.log("This is a fatal message.", Fatal);
+    logger.log<Trace>("This is a trace message.");
+    logger.log<Debug>("This is a debug message.");
+    logger.log<Info>("This is an info message.");
+    logger.log<Warning>("This is a warning message.");
+    logger.log<Error>("This is an error message.");
+    logger.log<Fatal>("This is a fatal message.");
 
     storeLogs();
 
@@ -27,7 +27,7 @@ TEST_F(LoggerTests, CheckLogsAllLevels) {
 }
 
 TEST_F(LoggerTests, LogMessageTest) {
-    loggerTests.log("Test message", Info);
+    loggerTests.log<Info>("Test message");
 
     storeLogs();
 
@@ -42,7 +42,7 @@ TEST_F(LoggerTests, MultipleLogMessagesTest) {
     constexpr int numberThreads{100};
     std::array<std::jthread, numberThreads> threads;
     auto logMessage = [&]() {
-        loggerTests.log("Test multithreading message", Info);
+        loggerTests.log<Info>("Test multithreading message");
     };
     for (int i{}; i < threads.size(); i++)
         threads.at(i) = std::jthread(logMessage);
@@ -61,8 +61,8 @@ TEST_F(LoggerTests, MultipleLogMessagesTest) {
 
 TEST_F(LoggerTests, LogOnlyError) {
     logger.setMinimumLogLevel(Error);
-    loggerTests.log("Info message", Info);
-    loggerTests.log("Error message", Error);
+    loggerTests.log<Info>("Info message");
+    loggerTests.log<Error>("Error message");
 
     storeLogs();
 

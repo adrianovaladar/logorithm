@@ -38,14 +38,16 @@ public:
     Logger &operator=(const Logger &) = delete;// Disable copy assignment operator
     /**
      * @brief Log a message.
+     * @tparam level The compile-time log level (e.g., DEBUG, INFO, WARNING, ERROR).
      * @param text The text of the log message.
-     * @param level The log level.
      * @param fields Optional pairs of strings to include additional information in the log.
      * @param source The source location of the log message.
      */
-    void log(const std::string_view &text, LOGLEVEL level,
-             const std::vector<std::pair<std::string, std::string>> &fields = {},
-             std::source_location source = std::source_location::current());
+    template<LOGLEVEL level>
+    void log(const std::string_view &text, const std::vector<std::pair<std::string, std::string>> &fields = {},
+    std::source_location source = std::source_location::current()) {
+        logImpl(text, level, fields, source);
+    }
     /**
      * @brief Sets the minimum log level to be considered for logging.
      *
@@ -63,6 +65,9 @@ public:
 private:
     class LoggerPImpl;
     std::unique_ptr<LoggerPImpl> impl;
+    void logImpl(const std::string_view &text, LOGLEVEL level,
+             const std::vector<std::pair<std::string, std::string>> &fields,
+             std::source_location source);
     /**
      * @brief Private constructor to prevent instantiation from outside.
      */

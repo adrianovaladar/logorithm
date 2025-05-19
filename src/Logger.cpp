@@ -162,7 +162,7 @@ Logger::~Logger() = default;
 
 Logger::Logger() : impl{std::make_unique<LoggerPImpl>()} {}
 
-void Logger::log(const std::string_view &text, const LOGLEVEL level,
+void Logger::logImpl(const std::string_view &text, const LOGLEVEL level,
                  const std::vector<std::pair<std::string, std::string>> &fields, const std::source_location source) {
     if (impl) {
         impl->log(text, level, fields, source);
